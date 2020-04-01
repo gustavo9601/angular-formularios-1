@@ -1,0 +1,94 @@
+<h2>Formulario basado en Template</h2>
+<form (ngSubmit)="addContact()">
+  <div class="form-item-image">
+    <img [src]="contactModal.picture" alt="" width="250px">
+    <input type="file" name="" id=""
+           (change)="addImage($event)"
+           accept=".png,.jpg,jpeg">
+  </div>
+
+  <div class="form-item">
+    <label for="name">Name</label>
+    <!--
+    #nameInput="ngModel"   // de esta forma hace referencia al formulario.input y se adicionan todas las porpiedades de ngModel
+    -->
+    <input type="text" id="name"
+           [(ngModel)]="contactModal.name"
+           name="name"
+           required
+           minlength="2"
+           #nameInput="ngModel">
+
+    <ng-container *ngIf="!nameInput.valid && nameInput.touched">
+
+      <!--
+      Dentro de cada elemento de tipo ngModel, existe el objeto errors y viene dependiendo de las validaciones
+      errors.required
+      errors.minLength
+      -->
+
+      <p class="error-message"
+         *ngIf="nameInput.errors.required">El campo es requerido
+      </p>
+      <p class="error-message"
+         *ngIf="nameInput.errors.minlength">El campo debe ser mayor o igual 2 caracteres
+      </p>
+    </ng-container>
+
+
+  </div>
+
+  <div class="form-group">
+
+
+    <!--===================================================================-->
+    <!-- Creacion dinamica de campos rednrizados en template y creados en el ngModel-->
+    <!--===================================================================-->
+    <p>Phones:</p>
+    <div class="form-item" *ngFor="let phone of contactModal.phones; index as i">
+      <label for="phone-type">Phone</label>
+      <select name="phone-type" id="phone-type"
+              [(ngModel)]="contactModal.phones[i].type"
+              name="phone-{{i}}-type">
+        <option [value]="type" *ngFor="let type of phoneTypes">{{type}}</option>
+      </select>
+      <input type="tel" id="phone-{{i}}-number"
+             [(ngModel)]="contactModal.phones[i].number"
+             name="phone-{{i}}-number">
+    </div>
+    <p (click)="addNewPhoneToModel()" class="form-action">Add phone+</p>
+  </div>
+
+
+  <div class="form-item">
+    <label for="email">Email</label>
+    <input type="text" id="email"
+           [(ngModel)]="contactModal.email"
+           name="email">
+  </div>
+  <div class="form-item">
+    <label for="address">Address</label>
+    <!--
+    #addressInput  de esta forma hace referencia directa al alemento HTML
+    -->
+    <input type="text" id="address"
+           [(ngModel)]="contactModal.direction"
+           name="address"
+           #addressInput
+           required>
+  </div>
+  <!--
+  (ngSubmit)="addContact()"  // al dar click en el submit se envian los datos al ngSubmit
+  -->
+  <button type="submit" class="form-button"> Add Contact !</button>
+</form>
+
+<hr>
+<p>Clases input address:</p>
+<p>{{addressInput.className}}</p>
+
+
+<pre>
+  <p>contactModal</p>
+  {{contactModal | json}}
+</pre>
