@@ -58,6 +58,9 @@
     <label for="email">Email:</label>
     <input type="text" id="email" formControlName="email">
   </div>
+  <ng-container *ngIf="!contactForm.get('email').valid && contactForm.get('email').touched">
+    <p *ngIf="contactForm.get('email').errors.pattern">El correo no es valido</p>
+  </ng-container>
 
   <!-- address field -->
   <div class="form-item">

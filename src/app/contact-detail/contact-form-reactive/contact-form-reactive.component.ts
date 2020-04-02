@@ -55,7 +55,7 @@ export class ContactFormReactiveComponent implements OnInit {
         number: ''
       })
     ]),
-    email: [''],
+    email: ['', Validators.pattern( /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,4})+$/)],
     address: ['', Validators.required],
   });
 
