@@ -7,12 +7,17 @@ import {ContactDetailResolverService} from './contact-detail-resolver.service';
 import {AuthGuard} from '../auth/auth.guard';
 import {ContactFormComponent} from './contact-form/contact-form.component';
 
+import { ReactiveFormsModule } from '@angular/forms';
+
 import {FormsModule} from "@angular/forms";
 import {StartWithCapitalDirective} from "src/app/directives/startWithCapital.directive";
+import { ContactFormReactiveComponent } from './contact-form-reactive/contact-form-reactive.component';
 
 const contactDetailRoutes: Routes = [
   {
-    path: 'contact-detail', component: ContactDetailShellComponent, data: {title: "Contact detail"},
+    path: 'contact-detail',
+    component: ContactDetailShellComponent,
+    data: {title: "Contact Formulario Template"},
     children: [
       {path: '', component: ContactFormComponent},
       {
@@ -22,6 +27,11 @@ const contactDetailRoutes: Routes = [
     ],
     canActivate: [AuthGuard]
   },
+  {
+    path : 'contat-form-reactive',
+    component: ContactFormReactiveComponent,
+    data: {title: "Contact Formulario Reactivo"}
+  },
 ];
 
 @NgModule({
@@ -29,14 +39,17 @@ const contactDetailRoutes: Routes = [
     //Modules
     CommonModule,
     RouterModule.forChild(contactDetailRoutes),
-    FormsModule
+    FormsModule,
+    ReactiveFormsModule
   ],
   declarations: [
     ContactDetailComponent,
     ContactDetailShellComponent,
     ContactFormComponent,
 
-    StartWithCapitalDirective   //Importamos la directiva ya que se usara en el formulario
+    StartWithCapitalDirective,
+
+    ContactFormReactiveComponent   //Importamos la directiva ya que se usara en el formulario
   ]
 
 })

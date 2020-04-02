@@ -1,0 +1,93 @@
+<!--
+[formGroup]="nombre_variable"
+-->
+<form [formGroup]="contactForm">
+  <!-- image field -->
+  <div class="form-item-image">
+    <img [src]="contactForm.value.picture">
+    <input type="file" accept=".png,.jpg,.jpeg" (change)=addImage($event)>
+  </div>
+
+  <!-- name field -->
+  <div class="form-item">
+    <label for="name">Name:</label>
+    <!--
+    formControlName = variable_tipo_form_control
+    -->
+    <input type="text" id="name" formControlName="name">
+    <!--
+    //formulario.get(nombre_name_variable).propiedad
+    contactForm.get('name').valid
+    -->
+    <ng-container *ngIf="!contactForm.get('name').valid && contactForm.get('name').touched">
+      <p *ngIf="contactForm.get('name').errors.required" class="error-message">El campo es requerido</p>
+      <p *ngIf="contactForm.get('name').errors.minlength" class="error-message">El nombre debe ser por los menos de 2
+        caracteres</p>
+      <p *ngIf="contactForm.get('name').errors.startsWithCapital" class="error-message">El nombre debe empezar con la
+        primera letra mayuscula</p>
+    </ng-container>
+  </div>
+
+  <!--
+  formArrayName="nombre variable"
+  permitira convertir en un arreglo los elementos por dentro
+  -->
+  <div class="form-group" formArrayName="phones">
+    <!-- phones field -->
+    <!--
+    formGroupName="varuable de agrupacion"
+      - dentro iran formControlsName
+
+      phones.controls  // retornara todos los arreglos que contenga la variable
+    -->
+
+
+    <div class="form-item" [formGroupName]="i" *ngFor="let phone of phones.controls; let i = index">
+      <label for="phone-type">Phone</label>
+      <select id="phone-type" formControlName="type">
+        <option [value]="type" *ngFor="let type of phoneTypes">{{type}}</option>
+      </select>
+      <input type="tel" id="phone-number" formControlName="number">
+    </div>
+    <p class="form-action" (click)="addNewPhoneToModel()">Add phone +</p>
+  </div>
+
+  <!-- email field -->
+  <div class="form-item">
+    <label for="email">Email:</label>
+    <input type="text" id="email" formControlName="email">
+  </div>
+
+  <!-- address field -->
+  <div class="form-item">
+    <label for="address">Adress:</label>
+    <input type="text" id="address" formControlName="address">
+  </div>
+  <!--
+  Accedemos a address gracias a que se uso un get address() desde la clase
+  -->
+  <ng-container *ngIf="!address.valid && address.touched">
+    <p class="error-message" *ngIf="address.errors.required">Este campo es requerido</p>
+  </ng-container>
+
+  <!-- submit button -->
+  <!--
+  contactForm.invalid  // retornara true si es invalido o false si no
+  -->
+  <button class="form-button"
+          type="submit"
+          [disabled]="contactForm.invalid">
+    Add contact
+  </button>
+  <button class="form-button"
+          type="button"
+          (click)="resetForm()">
+    Reset form
+  </button>
+
+</form>
+
+
+<hr>
+<p>Estatus del formulario contactForm = {{contactForm.status}}</p>
+<pre>{{contactForm.value | json }}</pre>
