@@ -1,7 +1,8 @@
 <!--
 [formGroup]="nombre_variable"
+(ngSubmit)="funcion a ejecutar"
 -->
-<form [formGroup]="contactForm">
+<form [formGroup]="contactForm" (ngSubmit)="addContact()">
   <!-- image field -->
   <div class="form-item-image">
     <img [src]="contactForm.value.picture">
@@ -41,9 +42,9 @@
       phones.controls  // retornara todos los arreglos que contenga la variable
     -->
 
-
+    <p>Phones:</p>
     <div class="form-item" [formGroupName]="i" *ngFor="let phone of phones.controls; let i = index">
-      <label for="phone-type">Phone</label>
+      <label for="phone-type">Phone {{i+1}} : </label>
       <select id="phone-type" formControlName="type">
         <option [value]="type" *ngFor="let type of phoneTypes">{{type}}</option>
       </select>

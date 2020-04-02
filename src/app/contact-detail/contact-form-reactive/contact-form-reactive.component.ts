@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Contact, PhoneType} from 'src/app/contact.model';
 import {ContactsService} from 'src/app/contacts.service';
-import {FormArray, FormControl, FormGroup, Validators} from '@angular/forms';
+import {FormArray, FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 
 //Funcion de validacion
 import {startWithCapitalValidator} from "src/app/directives/startWithCapital.directive";
@@ -22,7 +22,7 @@ export class ContactFormReactiveComponent implements OnInit {
   * FormGroup = recibe una instacia de FormGroup
   * entre [] recibira todos los valores de los campos
   * */
-  public contactForm: FormGroup = new FormGroup({
+  public contactFormOld: FormGroup = new FormGroup({
 
     //aributo: instancia_clase(valor_inicial, [reglas de validacion])
     name: new FormControl('', [Validators.required, Validators.minLength(2), startWithCapitalValidator()]),
@@ -37,7 +37,31 @@ export class ContactFormReactiveComponent implements OnInit {
     address: new FormControl('', [Validators.required])
   });
 
-  constructor(private contactsService: ContactsService) {
+
+  //Forma compacta con FormBuilder
+  /*
+  *
+  * FormBuilder
+  * .group({})
+  * .array([])
+  * .control({})
+  * */
+  public contactForm = this.fb.group({
+    name: ['', [Validators.required, Validators.minLength(2), startWithCapitalValidator()]],
+    picture: ['assets/default-user.png'],
+    phones: this.fb.array([
+      this.fb.group({
+        type: null,
+        number: ''
+      })
+    ]),
+    email: [''],
+    address: ['', Validators.required],
+  });
+
+
+  constructor(private _contactsService: ContactsService,
+              private fb: FormBuilder) {
   }
 
   ngOnInit() {
@@ -48,18 +72,32 @@ export class ContactFormReactiveComponent implements OnInit {
 
   addContact() {
 
+    console.log(this.contactForm);
+    this._contactsService.addContact(this.contactForm.value);
+    this.resetForm();
+    this.deleteStorageContact();
 
   }
 
 
   addNewPhoneToModel() {
-    //accedemos al get phones para pushear un nuevo objeto al arreglo de phones
+
+    //Usando el FormBuilder
     this.phones.push(
+      this.fb.group({
+        type: [null],
+        number: ['']
+      })
+    )
+
+    //accedemos al get phones para pushear un nuevo objeto al arreglo de phones
+    //Old version
+    /*this.phones.push(
       new FormGroup({
         type: new FormControl(null),
         number: new FormControl('')
       })
-    )
+    )*/
   }
 
 
@@ -88,19 +126,24 @@ export class ContactFormReactiveComponent implements OnInit {
 
   resetForm() {
 
-    //.reset() funcionaria pero cambia los valores por default de los elementos
-    this.contactForm.reset();
+    //.clear() vaciara a default los valores y la estructura del elemento
+    this.phones.clear();
+    this.addNewPhoneToModel();   //creara un telefono por default
 
-    this.contactForm.setValue({
-      name: '',
-      picture: "assets/default-user.png",
-      phones: [{
-        type: null,
-        number: ''
-      }],
-      email: '',
-      address: ''
-    });
+    //.reset() funcionaria pero cambia los valores por default de los elementos, pero no la estructura de los html dinamicos
+    this.contactForm.reset(
+      {
+        name: '',
+        picture: "assets/default-user.png",
+        phones: [{
+          type: null,
+          number: ''
+        }],
+        email: '',
+        address: ''
+      }
+    );
+
   }
 
   interactuandoApiObservablesForms() {
@@ -138,7 +181,10 @@ export class ContactFormReactiveComponent implements OnInit {
 
       this.contactForm.setValue(contactObject);
     }
+  }
 
+  deleteStorageContact() {
+    localStorage.removeItem('contact');
   }
 
 }
