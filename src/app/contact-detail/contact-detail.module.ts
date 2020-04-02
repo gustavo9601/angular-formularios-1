@@ -8,6 +8,7 @@ import {AuthGuard} from '../auth/auth.guard';
 import {ContactFormComponent} from './contact-form/contact-form.component';
 
 import {FormsModule} from "@angular/forms";
+import {StartWithCapitalDirective} from "src/app/directives/startWithCapital.directive";
 
 const contactDetailRoutes: Routes = [
   {
@@ -33,7 +34,9 @@ const contactDetailRoutes: Routes = [
   declarations: [
     ContactDetailComponent,
     ContactDetailShellComponent,
-    ContactFormComponent
+    ContactFormComponent,
+
+    StartWithCapitalDirective   //Importamos la directiva ya que se usara en el formulario
   ]
 
 })

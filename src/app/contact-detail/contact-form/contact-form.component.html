@@ -1,5 +1,10 @@
 <h2>Formulario basado en Template</h2>
-<form (ngSubmit)="addContact()">
+<!--
+
+#contactForm="ngForm"   usamos una variable que englobel todas las caracteristicas de ngForm
+.reset()  // funcion de ngForm que permite resetear el estado de todos los campos
+-->
+<form (ngSubmit)="addContact(); contactForm.reset();" #contactForm="ngForm">
   <div class="form-item-image">
     <img [src]="contactModal.picture" alt="" width="250px">
     <input type="file" name="" id=""
@@ -11,13 +16,15 @@
     <label for="name">Name</label>
     <!--
     #nameInput="ngModel"   // de esta forma hace referencia al formulario.input y se adicionan todas las porpiedades de ngModel
+    startsWithCapital]="true"   // usamos la directiva que validara si empieza en mayuscula el input, en caso contrario sera invalid el campo
     -->
     <input type="text" id="name"
            [(ngModel)]="contactModal.name"
            name="name"
            required
            minlength="2"
-           #nameInput="ngModel">
+           #nameInput="ngModel"
+           [startsWithCapital]="true">
 
     <ng-container *ngIf="!nameInput.valid && nameInput.touched">
 
@@ -32,6 +39,9 @@
       </p>
       <p class="error-message"
          *ngIf="nameInput.errors.minlength">El campo debe ser mayor o igual 2 caracteres
+      </p>
+      <p class="error-message"
+         *ngIf="nameInput.errors.startsWithCapital">El campo debe empezar en mayuscula
       </p>
     </ng-container>
 
@@ -52,9 +62,18 @@
               name="phone-{{i}}-type">
         <option [value]="type" *ngFor="let type of phoneTypes">{{type}}</option>
       </select>
+
+      <!--
+       pattern="[+][0-9]{1,3}[-][0-9]{8,12}"    expresion regular que valida
+       que inicie en +, siguen numeros entre 1 y 3 caracteres
+       sigue un -
+       siguen numeros entre 8 y 12 caracteres
+      -->
       <input type="tel" id="phone-{{i}}-number"
              [(ngModel)]="contactModal.phones[i].number"
-             name="phone-{{i}}-number">
+             name="phone-{{i}}-number"
+            pattern="[+][0-9]{1,3}[-][0-9]{8,12}"
+            placeholder="+xxx-xxxxxxxxxxxx">
     </div>
     <p (click)="addNewPhoneToModel()" class="form-action">Add phone+</p>
   </div>
@@ -64,7 +83,9 @@
     <label for="email">Email</label>
     <input type="text" id="email"
            [(ngModel)]="contactModal.email"
-           name="email">
+           name="email"
+           email
+           required>
   </div>
   <div class="form-item">
     <label for="address">Address</label>
@@ -80,7 +101,16 @@
   <!--
   (ngSubmit)="addContact()"  // al dar click en el submit se envian los datos al ngSubmit
   -->
-  <button type="submit" class="form-button"> Add Contact !</button>
+  <button type="submit"
+          class="form-button"
+          [disabled]="!contactForm.valid"
+  > Add Contact !
+  </button>
+  <button type="button"
+          class="form-button"
+          (click)="resetFormulario()"
+  > Clean form
+  </button>
 </form>
 
 <hr>

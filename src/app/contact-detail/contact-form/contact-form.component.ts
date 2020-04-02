@@ -1,10 +1,11 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 
 //Models
 import {Contact, PhoneType} from "src/app/contact.model";
 
 //Services
 import {ContactsService} from "src/app/contacts.service";
+import {NgForm} from "@angular/forms";
 
 @Component({
   selector: 'app-contact-form',
@@ -16,6 +17,11 @@ export class ContactFormComponent implements OnInit {
 
   public contactModal: Contact;
   public readonly phoneTypes: string[] = Object.values(PhoneType);
+
+
+  //Referencia al elemento contactForm que es el nombre que se el dio al formulario
+  // sera de tipo NgForm
+  @ViewChild('contactForm', {static:true}) contactForm:NgForm;
 
   constructor(private _contactService: ContactsService) {
     this.resetContactModel();
@@ -55,6 +61,10 @@ export class ContactFormComponent implements OnInit {
     reader.onload = (evt) => {
       this.contactModal.picture = <string>reader.result;
     }
+  }
+
+  resetFormulario(){
+    this.contactForm.reset();
   }
 
 }
